@@ -6,16 +6,29 @@ import { demoTasks, demoProfile } from '../lib/seed'
 
 export function Login() {
   const nav = useNavigate()
+  // Demo mode: pre-filled so one click always signs in. Any email + password works.
+  const [email, setEmail] = useState('alex@school.edu')
+  const [pw, setPw] = useState('demo1234')
+  const [signingIn, setSigningIn] = useState(false)
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (signingIn) return
+    setSigningIn(true)
+    window.setTimeout(() => nav('/dashboard'), 600)
+  }
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="card w-full max-w-md p-8">
         <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-600 text-white"><Sparkles size={20} /></span>
         <h1 className="mt-4 text-2xl font-extrabold">Welcome back</h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Log in to your academic command center.</p>
-        <form className="mt-6 space-y-3" onSubmit={(e) => { e.preventDefault(); nav('/dashboard') }}>
-          <div><label className="label" htmlFor="email">Email</label><input id="email" className="input" type="email" required placeholder="alex@school.edu" autoComplete="email" /></div>
-          <div><label className="label" htmlFor="pw">Password</label><input id="pw" className="input" type="password" required placeholder="••••••••" autoComplete="current-password" /></div>
-          <button className="btn-primary w-full !py-3" type="submit">Log in <ArrowRight size={16} /></button>
+        <p className="mt-2 rounded-xl bg-brand-50 px-3 py-2 text-xs font-medium text-brand-700 ring-1 ring-brand-100 dark:bg-brand-500/10 dark:text-brand-100 dark:ring-brand-500/20">
+          Demo mode — no real account needed. Any email + password works, or just click Log in.
+        </p>
+        <form className="mt-4 space-y-3" onSubmit={submit}>
+          <div><label className="label" htmlFor="email">Email</label><input id="email" className="input" type="email" required placeholder="alex@school.edu" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+          <div><label className="label" htmlFor="pw">Password</label><input id="pw" className="input" type="password" required placeholder="••••••••" autoComplete="current-password" value={pw} onChange={(e) => setPw(e.target.value)} /></div>
+          <button className="btn-primary w-full !py-3" type="submit" disabled={signingIn}>{signingIn ? 'Signing in…' : <>Log in <ArrowRight size={16} /></>}</button>
         </form>
         <button onClick={() => nav('/dashboard')} className="btn-ghost mt-3 w-full">Try Demo instead — no account needed</button>
         <p className="mt-4 text-center text-xs text-slate-400">New here? <Link to="/onboarding" className="font-semibold text-brand-600 hover:underline">Set up your study plan</Link></p>
